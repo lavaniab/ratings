@@ -52,6 +52,12 @@ def load_movies():
 
         db.session.add(movie)
 
+        # ticker to see if its adding. Otherewise you don't know and blindly wait...
+        if i % 100 == 0:
+            print(i)
+
+            db.session.commit()
+
     db.session.commit()
 
 
@@ -64,8 +70,9 @@ def load_ratings():
         user_id, movie_id, score, timestamp = row.split("\t")
         # rating_id, movie_id, user_id, score = row.split("\t")
 
-        movie_rating = Rating(epoch_timestamp=timestamp, movie_id=int(movie_id),
-                              user_id=int(user_id), score=int(score))
+        movie_rating = Rating(movie_id=int(movie_id),
+                              user_id=int(user_id),
+                              score=int(score))
 
         db.session.add(movie_rating)
 

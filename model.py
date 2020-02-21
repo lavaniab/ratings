@@ -1,12 +1,20 @@
 """Models and database functions for Ratings project."""
 
 from flask_sqlalchemy import SQLAlchemy
+# from flask import Flask
+
 
 # This is the connection to the PostgreSQL database; we're getting this through
 # the Flask-SQLAlchemy helper library. On this, we can find the `session`
 # object, where we do most of our interactions (like committing, etc.)
 
 db = SQLAlchemy()
+
+
+# def create_app():
+#     app = Flask(__name__)
+#     db.init_app(app)
+#     return app
 
 
 ##############################################################################
@@ -34,7 +42,7 @@ class Movie(db.Model):
     __tablename__ = "movies"
 
     movies_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    title = db.Column(db.String(64), nullable=False)
+    title = db.Column(db.String(100), nullable=False)
     released_at = db.Column(db.DateTime, nullable=False)
     imdb_url = db.Column(db.String(250), nullable=False)
 
@@ -56,9 +64,6 @@ class Rating(db.Model):
     def __repr__(self):
 
         return f"<Movie Rating ID={self.rating_id}, User's score={self.score}>"
-
-
-# db.create_all()
 
 
 ##############################################################################
