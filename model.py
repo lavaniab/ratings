@@ -23,8 +23,42 @@ class User(db.Model):
     age = db.Column(db.Integer, nullable=True)
     zipcode = db.Column(db.String(15), nullable=True)
 
+    def __repr__(self):
 
-# Put your Movie and Rating model classes here.
+        return f"<User user_id={self.user_id} email={self.email}>"
+
+
+class Movie(db.Model):
+    """Movie Infomration"""
+
+    __tablename__ = "movies"
+
+    movies_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    title = db.Column(db.String(64), nullable=False)
+    released_at = db.Column(db.DateTime(), nullable=False)
+    imdb_url = db.Column(db.String(250), nullable=False)
+
+    def __repr__(self):
+
+        return f"<Movie title={self.title} ID={self.movies_id}>"
+
+
+class Rating(db.Model):
+    """Movie Rating by user"""
+
+    __tablename__ = "movie_rating"
+
+    rating_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    movie_id = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.Integer, nullable=False)
+    score = db.Column(db.Integer, nullable=False)
+
+    def __repr__(self):
+
+        return f"<Movie Rating ID={self.rating_id}, User's score={self.score}>"
+
+
+# db.create_all()
 
 
 ##############################################################################
