@@ -1,7 +1,8 @@
 """Utility file to seed ratings database from MovieLens data in seed_data/"""
 
 from sqlalchemy import func
-from model import User
+from model import User, Movie, Rating
+from datetime import datetime
 # from model import Rating
 # from model import Movie
 
@@ -11,8 +12,6 @@ from server import app
 
 def load_users():
     """Load users from u.user into database."""
-
-    print("Users")
 
     # Delete all rows in table, so if we need to run this a second time,
     # we won't be trying to add duplicate users
@@ -36,10 +35,38 @@ def load_users():
 
 def load_movies():
     """Load movies from u.item into database."""
+    Movie.query.delete()
+
+    for row in open("seed_data/u.item"):
+        row = row.strip()
+        movies_id, title, released_at, imdb_url = row.split("|")
+
+        format_date = "%d-%b-%Y"
+
+        movie = Movie(movies_id=movies_id,
+                      title=title,
+                      released_at=datetime.strptime(released_at, format_date),
+                      imdb_url=imdb_url)
+
+        db.session.add(movie)
+
+    db.session.commit()
 
 
 def load_ratings():
     """Load ratings from u.data into database."""
+    Rating.query.delete()
+
+    for row in open("seed_data/u.data"):
+        row = row.strip()
+        rating_id, movie_id, user_id, score = row.split("\t")
+
+        movie_rating = Rating(rating_id=rating_id, movie_id=movie_id,
+                              user_id=user_id, score=score)
+
+        db.session.add(movie_rating)
+
+    db.session.commit()
 
 
 def set_val_user_id():

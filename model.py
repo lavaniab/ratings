@@ -1,6 +1,7 @@
 """Models and database functions for Ratings project."""
 
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
 # This is the connection to the PostgreSQL database; we're getting this through
 # the Flask-SQLAlchemy helper library. On this, we can find the `session`
@@ -35,7 +36,7 @@ class Movie(db.Model):
 
     movies_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     title = db.Column(db.String(64), nullable=False)
-    released_at = db.Column(db.DateTime(), nullable=False)
+    released_at = db.Column(db.DateTime(datetime), nullable=False)
     imdb_url = db.Column(db.String(250), nullable=False)
 
     def __repr__(self):
