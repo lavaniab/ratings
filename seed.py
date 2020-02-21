@@ -37,11 +37,13 @@ def load_movies():
     """Load movies from u.item into database."""
     Movie.query.delete()
 
-    for row in open("seed_data/u.item"):
+    for i, row in enumerate(open("seed_data/u.item")):
         row = row.strip()
-        movies_id, title, released_at, imdb_url = row.split("|")
+        movies_id, title, released_at, empty, imdb_url = row.split("|")[:5]
 
         format_date = "%d-%b-%Y"
+
+        title = title[:-7]
 
         movie = Movie(movies_id=movies_id,
                       title=title,
@@ -59,10 +61,11 @@ def load_ratings():
 
     for row in open("seed_data/u.data"):
         row = row.strip()
-        rating_id, movie_id, user_id, score = row.split("\t")
+        user_id, movie_id, score, timestamp = row.split("\t")
+        # rating_id, movie_id, user_id, score = row.split("\t")
 
-        movie_rating = Rating(rating_id=rating_id, movie_id=movie_id,
-                              user_id=user_id, score=score)
+        movie_rating = Rating(epoch_timestamp=timestamp, movie_id=int(movie_id),
+                              user_id=int(user_id), score=int(score))
 
         db.session.add(movie_rating)
 
