@@ -37,12 +37,13 @@ def user_list():
 def registration():
     # add query that checks if email in db, if not
     # create account
+   
     email = request.args.get("email")
     password = request.args.get("password")
     age = request.args.get("age")
     zipcode = request.args.get("zipcode")
 
-    list_email = db.users.query.filter_by(email).all()
+    list_email = db.query.filter_by(email).all()
 
     if email in list_email:
     
@@ -60,7 +61,10 @@ def registration():
                                                      age=age,
                                                      zipcode=zipcode)
 
+@app.route('/movies')
+def all_movies():
 
+    return render_template("movies.html")
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the
     # point that we invoke the DebugToolbarExtension
