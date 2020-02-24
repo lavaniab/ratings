@@ -2,10 +2,10 @@
 
 from jinja2 import StrictUndefined
 
-from flask import Flask
+from flask import Flask, render_template, redirect, request, flash, session
 from flask_debugtoolbar import DebugToolbarExtension
 
-from model import connect_to_db, db
+from model import User, Rating, Movie, connect_to_db, db
 
 
 app = Flask(__name__)
@@ -22,7 +22,43 @@ app.jinja_env.undefined = StrictUndefined
 @app.route('/')
 def index():
     """Homepage."""
-    return "<html><body>Placeholder for the homepage.</body></html>"
+    return render_template("homepage.html")
+
+
+@app.route('/users')
+def user_list():
+    """Show list of users."""
+
+    users = User.query.all()
+    return render_template("users-list.html", users=users)
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def registration():
+    # add query that checks if email in db, if not
+    # create account
+    email = request.args.get("email")
+    password = request.args.get("password")
+    age = request.args.get("age")
+    zipcode = request.args.get("zipcode")
+
+    list_email = db.users.query.filter_by(email).all()
+
+    if email in list_email:
+    
+        flash("User already exists.")
+        return redirect("/")
+    
+    else:
+
+        db.session.add(email, password, age, zipcode)
+        db.session.commit()
+
+        flash("Logged in")
+        return render_template("register-form.html", email=email,
+                                                     password=password,
+                                                     age=age,
+                                                     zipcode=zipcode)
 
 
 if __name__ == "__main__":
