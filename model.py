@@ -41,14 +41,14 @@ class Movie(db.Model):
 
     __tablename__ = "movies"
 
-    movies_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    movie_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     released_at = db.Column(db.DateTime, nullable=False)
     imdb_url = db.Column(db.String(250), nullable=False)
 
     def __repr__(self):
 
-        return f"<Movie title={self.title} ID={self.movies_id}>"
+        return f"<Movie title={self.title} ID={self.movie_id}>"
 
 
 class Rating(db.Model):
@@ -57,9 +57,13 @@ class Rating(db.Model):
     __tablename__ = "movie_rating"
 
     rating_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    movie_id = db.Column(db.Integer, nullable=False)
-    user_id = db.Column(db.Integer, nullable=False)
+    movie_id = db.Column(db.Integer, db.ForeignKey('movies.movie_id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     score = db.Column(db.Integer, nullable=False)
+
+    user = db.relationship("User", backref=db.backref("movie_rating", order_by=rating_id))
+
+    movie = db.relationship("Movie", backref=db.backref("movie_rating", order_by=rating_id))
 
     def __repr__(self):
 

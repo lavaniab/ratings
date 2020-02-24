@@ -52,7 +52,7 @@ def load_movies():
 
         db.session.add(movie)
 
-        # ticker to see if its adding. Otherewise you don't know and blindly wait...
+        # Progress ticker
         if i % 100 == 0:
             print(i)
 
@@ -65,7 +65,7 @@ def load_ratings():
     """Load ratings from u.data into database."""
     Rating.query.delete()
 
-    for row in open("seed_data/u.data"):
+    for i, row in open("seed_data/u.data"):
         row = row.strip()
         user_id, movie_id, score, timestamp = row.split("\t")
         # rating_id, movie_id, user_id, score = row.split("\t")
@@ -75,6 +75,12 @@ def load_ratings():
                               score=int(score))
 
         db.session.add(movie_rating)
+        
+        # Progress ticker
+        if i % 1000 == 0:
+            print(i)
+
+            db.session.commit()
 
     db.session.commit()
 
