@@ -48,7 +48,7 @@ class Movie(db.Model):
 
     def __repr__(self):
 
-        return f"<Movie title={self.title} ID={self.movie_id}>"
+        return f"<Movie title={self.title} movie_id={self.movie_id}>"
 
 
 class Rating(db.Model):
@@ -61,9 +61,9 @@ class Rating(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     score = db.Column(db.Integer, nullable=False)
 
-    user = db.relationship("User", backref=db.backref("movie_rating", order_by=rating_id))
+    user = db.relationship("User", backref="movie_rating")
 
-    movie = db.relationship("Movie", backref=db.backref("movie_rating", order_by=rating_id))
+    movie = db.relationship("Movie", backref="movie_rating")
 
     def __repr__(self):
 

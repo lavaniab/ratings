@@ -10,15 +10,15 @@ from model import connect_to_db, db
 from server import app
 
 
-def load_users():
+def load_users(user_filename):
     """Load users from u.user into database."""
 
     # Delete all rows in table, so if we need to run this a second time,
     # we won't be trying to add duplicate users
-    User.query.delete()
+    # User.query.delete()
 
     # Read u.user file and insert data
-    for row in open("seed_data/u.user"):
+    for i, row in enumerate(open("seed_data/u.user")):
         row = row.rstrip()
         user_id, age, gender, occupation, zipcode = row.split("|")
 
@@ -29,16 +29,20 @@ def load_users():
         # We need to add to the session or it won't ever be stored
         db.session.add(user)
 
+        if i % 100 = 0:
+            print(i)
+
     # Once we're done, we should commit our work
     db.session.commit()
 
 
-def load_movies():
+def load_movies(movie_filename):
     """Load movies from u.item into database."""
-    Movie.query.delete()
+    # Movie.query.delete()
 
     for i, row in enumerate(open("seed_data/u.item")):
         row = row.strip()
+
         movies_id, title, released_at, empty, imdb_url = row.split("|")[:5]
 
         format_date = "%d-%b-%Y"
@@ -56,16 +60,14 @@ def load_movies():
         if i % 100 == 0:
             print(i)
 
-            db.session.commit()
-
     db.session.commit()
 
 
-def load_ratings():
+def load_ratings(rating_filename):
     """Load ratings from u.data into database."""
-    Rating.query.delete()
+    # Rating.query.delete()
 
-    for i, row in open("seed_data/u.data"):
+    for i, row in enumerate(open("seed_data/u.data")):
         row = row.strip()
         user_id, movie_id, score, timestamp = row.split("\t")
         # rating_id, movie_id, user_id, score = row.split("\t")
@@ -105,7 +107,10 @@ if __name__ == "__main__":
     db.create_all()
 
     # Import different types of data
-    load_users()
-    load_movies()
-    load_ratings()
+    user_filename = "seed_data/u.user"
+    movie_filename = "seed_data/u.item"
+    rating_filename = "seed_data/u.data"
+    load_users(user_filename)
+    load_movies(movie_filename)
+    load_ratings(rating_filename)
     set_val_user_id()

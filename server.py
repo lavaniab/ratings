@@ -30,41 +30,71 @@ def user_list():
     """Show list of users."""
 
     users = User.query.all()
+
     return render_template("users-list.html", users=users)
 
 
-@app.route('/register', methods=['GET', 'POST'])
-def registration():
-    # add query that checks if email in db, if not
-    # create account
-   
-    email = request.args.get("email")
-    password = request.args.get("password")
-    age = request.args.get("age")
-    zipcode = request.args.get("zipcode")
+@app.route('/register', methods=['GET'])
+def register_form():
+    """Getting the registration form"""
+    return render_template("register-form.html")
 
-    list_email = db.query.filter_by(email).all()
-
-    if email in list_email:
     
-        flash("User already exists.")
-        return redirect("/")
-    
-    else:
+@app.route('/register', methods=['POST'])
+def register_process():
+    """Obtain user log in information, with post request."""
 
-        db.session.add(email, password, age, zipcode)
-        db.session.commit()
+    email = request.form["email"]
+    password = request.form["password"]
+    age = int(request.form["age"])
+    zipcode = request.form["zipcode"]
 
-        flash("Logged in")
-        return render_template("register-form.html", email=email,
-                                                     password=password,
-                                                     age=age,
-                                                     zipcode=zipcode)
+    new_user = User(email=email, password=password, age=age, zipcode=zipcode)
+
+    db.session.add(new_user)
+    db.session.commit()
+
+    flash("Logged in, User {email} added.")
+
+    return redirect("/")
+
+
+@app.route('/login', methods=['POST'])
+def login_process():
+    """Login page, allow users to attempt login and check for validity"""
+
+    email = request.form["email"]
+    password = request.form["password"]
+
+    user = User.query.filter_by(email=email).first()
+
+    if not user:
+        flash("No such user exists")
+        return redirect("/login")
+    if user.password != password:
+        flash("Incorrect password entered")
+
+        session["user_id"] = user.user_id
+
+    flash("Logged in")
+    return redirect(f"/users/{user.user_id}")
+
+
+@app.route('/logout')  
+def logout():
+    """Allow users to logout"""
+    del session["user_id"]
+    flash("Logged Out")
+    return redirect("/")
+
 
 @app.route('/movies')
 def all_movies():
+    """Here is a list of movies in database."""
 
     return render_template("movies.html")
+
+
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the
     # point that we invoke the DebugToolbarExtension
